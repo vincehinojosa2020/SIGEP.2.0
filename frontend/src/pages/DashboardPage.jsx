@@ -10,7 +10,8 @@ import {
   FolderGit2,
   ScanSearch,
   TrendingUp,
-  Clock
+  Clock,
+  Sparkles
 } from "lucide-react";
 import { 
   AreaChart, 
@@ -50,11 +51,11 @@ const DashboardPage = () => {
   }, []);
 
   const severityColors = {
-    critical: "#EF4444",
-    high: "#F97316",
-    medium: "#EAB308",
-    low: "#3B82F6",
-    unknown: "#10B981"
+    critical: "#F87171",
+    high: "#FB923C",
+    medium: "#FACC15",
+    low: "#60A5FA",
+    unknown: "#34D399"
   };
 
   const pieData = stats ? [
@@ -67,11 +68,12 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="p-8 animate-pulse">
-          <div className="h-8 w-48 rounded mb-8" style={{ backgroundColor: 'var(--surface-2)' }}></div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="p-8">
+          <div className="h-8 w-56 skeleton mb-2"></div>
+          <div className="h-4 w-72 skeleton mb-10"></div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-32 rounded" style={{ backgroundColor: 'var(--surface-1)' }}></div>
+              <div key={i} className="h-32 skeleton rounded-lg"></div>
             ))}
           </div>
         </div>
@@ -81,64 +83,69 @@ const DashboardPage = () => {
 
   return (
     <Layout>
-      <div className="p-6 md:p-8">
+      <div className="p-6 md:p-8 lg:p-10">
         {/* Header */}
-        <div className="mb-8">
-          <h1 
-            className="text-2xl md:text-3xl font-bold tracking-tight mb-2"
-            style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-          >
-            Security Overview
-          </h1>
-          <p style={{ color: 'var(--text-muted)' }}>
-            Monitor vulnerabilities across your projects
-          </p>
+        <div className="mb-10">
+          <h1 className="page-title">Security Overview</h1>
+          <p className="page-subtitle">Monitor vulnerabilities across your projects</p>
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-          <div className="metric-card" data-testid="metric-projects">
-            <div className="flex items-center gap-3 mb-4">
-              <FolderGit2 className="w-5 h-5" style={{ color: 'var(--primary)' }} />
-              <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                Projects
-              </span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-10">
+          <div className="metric-card hover-lift" data-testid="metric-projects">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--primary-muted)' }}
+              >
+                <FolderGit2 className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              </div>
+              <span className="overline">Projects</span>
             </div>
             <div className="metric-value" style={{ color: 'var(--text-heading)' }}>
               {stats?.project_count || 0}
             </div>
           </div>
 
-          <div className="metric-card" data-testid="metric-scans">
-            <div className="flex items-center gap-3 mb-4">
-              <ScanSearch className="w-5 h-5" style={{ color: 'var(--primary)' }} />
-              <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                Total Scans
-              </span>
+          <div className="metric-card hover-lift" data-testid="metric-scans">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--primary-muted)' }}
+              >
+                <ScanSearch className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              </div>
+              <span className="overline">Total Scans</span>
             </div>
             <div className="metric-value" style={{ color: 'var(--text-heading)' }}>
               {stats?.total_scans || 0}
             </div>
           </div>
 
-          <div className="metric-card" data-testid="metric-vulns">
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="w-5 h-5" style={{ color: 'var(--critical-text)' }} />
-              <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                Vulnerabilities
-              </span>
+          <div className="metric-card hover-lift" data-testid="metric-vulns">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--critical-bg)' }}
+              >
+                <AlertTriangle className="w-4 h-4" style={{ color: 'var(--critical-text)' }} />
+              </div>
+              <span className="overline">Vulnerabilities</span>
             </div>
             <div className="metric-value" style={{ color: 'var(--critical-text)' }}>
               {stats?.total_vulnerabilities || 0}
             </div>
           </div>
 
-          <div className="metric-card" data-testid="metric-critical">
-            <div className="flex items-center gap-3 mb-4">
-              <Shield className="w-5 h-5" style={{ color: 'var(--critical-text)' }} />
-              <span className="text-xs uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                Critical
-              </span>
+          <div className="metric-card hover-lift" data-testid="metric-critical">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--critical-bg)' }}
+              >
+                <Shield className="w-4 h-4" style={{ color: 'var(--critical-text)' }} />
+              </div>
+              <span className="overline">Critical</span>
             </div>
             <div className="metric-value" style={{ color: 'var(--critical-text)' }}>
               {stats?.vulnerability_summary?.critical || 0}
@@ -147,52 +154,59 @@ const DashboardPage = () => {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 mb-10">
           {/* Trend Chart */}
           <div className="lg:col-span-2 chart-container" data-testid="trend-chart">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 
-                  className="text-lg font-semibold"
-                  style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-                >
-                  Vulnerability Trend
-                </h3>
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Last 14 days</p>
+                <h3 className="section-title">Vulnerability Trend</h3>
+                <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Last 14 days</p>
               </div>
-              <TrendingUp className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
+              <div 
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--surface-2)' }}
+              >
+                <TrendingUp className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+              </div>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats?.trend_data || []}>
                   <defs>
                     <linearGradient id="criticalGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={severityColors.critical} stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor={severityColors.critical} stopOpacity={0}/>
+                      <stop offset="0%" stopColor={severityColors.critical} stopOpacity={0.25}/>
+                      <stop offset="100%" stopColor={severityColors.critical} stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="highGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={severityColors.high} stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor={severityColors.high} stopOpacity={0}/>
+                      <stop offset="0%" stopColor={severityColors.high} stopOpacity={0.25}/>
+                      <stop offset="100%" stopColor={severityColors.high} stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                   <XAxis 
                     dataKey="date" 
-                    stroke="var(--text-muted)"
+                    stroke="var(--border-default)"
                     tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
                     tickFormatter={(val) => val.slice(5)}
                   />
                   <YAxis 
-                    stroke="var(--text-muted)"
+                    stroke="var(--border-default)"
                     tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    width={32}
                   />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: 'var(--surface-1)', 
+                      backgroundColor: 'var(--surface-2)', 
                       border: '1px solid var(--border-default)',
-                      borderRadius: '4px'
+                      borderRadius: '8px',
+                      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
                     }}
-                    labelStyle={{ color: 'var(--text-heading)' }}
+                    labelStyle={{ color: 'var(--text-heading)', fontWeight: 600, marginBottom: 4 }}
+                    itemStyle={{ color: 'var(--text-body)', fontSize: 12 }}
                   />
                   <Area 
                     type="monotone" 
@@ -217,26 +231,22 @@ const DashboardPage = () => {
           <div className="chart-container" data-testid="severity-chart">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 
-                  className="text-lg font-semibold"
-                  style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-                >
-                  Severity Distribution
-                </h3>
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>All time</p>
+                <h3 className="section-title">Severity Distribution</h3>
+                <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>All time</p>
               </div>
             </div>
             {pieData.length > 0 ? (
               <>
-                <div className="h-48">
+                <div className="h-44">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={pieData}
-                        innerRadius={50}
+                        innerRadius={55}
                         outerRadius={80}
-                        paddingAngle={2}
+                        paddingAngle={3}
                         dataKey="value"
+                        strokeWidth={0}
                       >
                         {pieData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -244,9 +254,10 @@ const DashboardPage = () => {
                       </Pie>
                       <Tooltip 
                         contentStyle={{ 
-                          backgroundColor: 'var(--surface-1)', 
+                          backgroundColor: 'var(--surface-2)', 
                           border: '1px solid var(--border-default)',
-                          borderRadius: '4px'
+                          borderRadius: '8px',
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
                         }}
                       />
                     </PieChart>
@@ -256,11 +267,11 @@ const DashboardPage = () => {
                   {pieData.map((item) => (
                     <div key={item.name} className="flex items-center gap-2">
                       <div 
-                        className="w-3 h-3 rounded-sm"
+                        className="w-2.5 h-2.5 rounded-sm"
                         style={{ backgroundColor: item.color }}
                       />
                       <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {item.name}: <span className="font-mono">{item.value}</span>
+                        {item.name}: <span className="font-mono font-medium" style={{ color: 'var(--text-body)' }}>{item.value}</span>
                       </span>
                     </div>
                   ))}
@@ -268,100 +279,76 @@ const DashboardPage = () => {
               </>
             ) : (
               <div className="h-48 flex items-center justify-center">
-                <p style={{ color: 'var(--text-muted)' }}>No vulnerability data</p>
+                <div className="text-center">
+                  <Sparkles className="w-8 h-8 mx-auto mb-3 opacity-30" style={{ color: 'var(--text-muted)' }} />
+                  <p style={{ color: 'var(--text-muted)' }}>No vulnerability data yet</p>
+                </div>
               </div>
             )}
           </div>
         </div>
 
         {/* Severity Summary & Recent Vulnerabilities */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
           {/* Severity Summary Cards */}
-          <div className="space-y-4">
-            <h3 
-              className="text-lg font-semibold mb-4"
-              style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-            >
-              Severity Breakdown
-            </h3>
+          <div className="space-y-3">
+            <h3 className="section-title mb-4">Severity Breakdown</h3>
             
-            <div 
-              className="p-4 rounded-sm flex items-center justify-between"
-              style={{ backgroundColor: 'var(--critical-bg)', border: '1px solid var(--critical-border)' }}
-              data-testid="severity-critical"
-            >
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5" style={{ color: 'var(--critical-text)' }} />
-                <span style={{ color: 'var(--critical-text)' }}>Critical</span>
+            {[
+              { key: 'critical', label: 'Critical', icon: AlertCircle, color: 'critical' },
+              { key: 'high', label: 'High', icon: AlertTriangle, color: 'high' },
+              { key: 'medium', label: 'Medium', icon: AlertTriangle, color: 'medium' },
+              { key: 'low', label: 'Low', icon: Info, color: 'low' },
+            ].map(({ key, label, icon: Icon, color }) => (
+              <div 
+                key={key}
+                className="p-4 rounded-lg flex items-center justify-between transition-all duration-150 hover:scale-[1.02]"
+                style={{ 
+                  backgroundColor: `var(--${color}-bg)`, 
+                  border: `1px solid var(--${color}-border)` 
+                }}
+                data-testid={`severity-${key}`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-4 h-4" style={{ color: `var(--${color}-text)` }} />
+                  <span className="font-medium text-sm" style={{ color: `var(--${color}-text)` }}>{label}</span>
+                </div>
+                <span 
+                  className="font-mono text-xl font-semibold"
+                  style={{ color: `var(--${color}-text)` }}
+                >
+                  {stats?.vulnerability_summary?.[key] || 0}
+                </span>
               </div>
-              <span className="font-mono text-xl font-medium" style={{ color: 'var(--critical-text)' }}>
-                {stats?.vulnerability_summary?.critical || 0}
-              </span>
-            </div>
-
-            <div 
-              className="p-4 rounded-sm flex items-center justify-between"
-              style={{ backgroundColor: 'var(--high-bg)', border: '1px solid var(--high-border)' }}
-              data-testid="severity-high"
-            >
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5" style={{ color: 'var(--high-text)' }} />
-                <span style={{ color: 'var(--high-text)' }}>High</span>
-              </div>
-              <span className="font-mono text-xl font-medium" style={{ color: 'var(--high-text)' }}>
-                {stats?.vulnerability_summary?.high || 0}
-              </span>
-            </div>
-
-            <div 
-              className="p-4 rounded-sm flex items-center justify-between"
-              style={{ backgroundColor: 'var(--medium-bg)', border: '1px solid var(--medium-border)' }}
-              data-testid="severity-medium"
-            >
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5" style={{ color: 'var(--medium-text)' }} />
-                <span style={{ color: 'var(--medium-text)' }}>Medium</span>
-              </div>
-              <span className="font-mono text-xl font-medium" style={{ color: 'var(--medium-text)' }}>
-                {stats?.vulnerability_summary?.medium || 0}
-              </span>
-            </div>
-
-            <div 
-              className="p-4 rounded-sm flex items-center justify-between"
-              style={{ backgroundColor: 'var(--low-bg)', border: '1px solid var(--low-border)' }}
-              data-testid="severity-low"
-            >
-              <div className="flex items-center gap-3">
-                <Info className="w-5 h-5" style={{ color: 'var(--low-text)' }} />
-                <span style={{ color: 'var(--low-text)' }}>Low</span>
-              </div>
-              <span className="font-mono text-xl font-medium" style={{ color: 'var(--low-text)' }}>
-                {stats?.vulnerability_summary?.low || 0}
-              </span>
-            </div>
+            ))}
           </div>
 
           {/* Recent Vulnerabilities */}
           <div 
-            className="lg:col-span-2 rounded-md"
-            style={{ backgroundColor: 'var(--surface-1)', border: '1px solid var(--border-default)' }}
+            className="lg:col-span-2 rounded-lg overflow-hidden"
+            style={{ 
+              background: 'linear-gradient(180deg, var(--surface-1) 0%, rgba(10, 20, 16, 0.8) 100%)',
+              border: '1px solid var(--border-default)' 
+            }}
             data-testid="recent-vulnerabilities"
           >
-            <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: 'var(--border-default)' }}>
+            <div 
+              className="p-5 border-b flex items-center justify-between"
+              style={{ borderColor: 'var(--border-default)' }}
+            >
               <div>
-                <h3 
-                  className="text-lg font-semibold"
-                  style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-                >
-                  Recent Vulnerabilities
-                </h3>
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Latest findings across projects</p>
+                <h3 className="section-title">Recent Vulnerabilities</h3>
+                <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>Latest findings across projects</p>
               </div>
-              <Clock className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
+              <div 
+                className="w-9 h-9 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--surface-2)' }}
+              >
+                <Clock className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+              </div>
             </div>
             
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[380px]">
               {recentVulns.length > 0 ? (
                 <table className="data-table">
                   <thead>
@@ -374,15 +361,16 @@ const DashboardPage = () => {
                   </thead>
                   <tbody>
                     {recentVulns.map((vuln, idx) => (
-                      <tr key={idx}>
+                      <tr key={idx} className="cursor-pointer">
                         <td>
-                          <span className="font-mono text-sm" style={{ color: 'var(--text-heading)' }}>
+                          <span className="font-mono text-[13px]" style={{ color: 'var(--text-heading)' }}>
                             {vuln.vuln_id}
                           </span>
                         </td>
                         <td>
-                          <span className="font-mono text-sm">
-                            {vuln.package_name}@{vuln.installed_version}
+                          <span className="font-mono text-[13px]">
+                            {vuln.package_name}
+                            <span style={{ color: 'var(--text-muted)' }}>@{vuln.installed_version}</span>
                           </span>
                         </td>
                         <td>
@@ -390,15 +378,17 @@ const DashboardPage = () => {
                             {vuln.severity}
                           </span>
                         </td>
-                        <td style={{ color: 'var(--text-muted)' }}>
-                          {vuln.project_name}
+                        <td>
+                          <span className="text-[13px]" style={{ color: 'var(--text-muted)' }}>
+                            {vuln.project_name}
+                          </span>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               ) : (
-                <div className="empty-state py-16">
+                <div className="empty-state py-20">
                   <Shield className="empty-state-icon" />
                   <h4 className="empty-state-title">No Vulnerabilities Found</h4>
                   <p className="empty-state-text">

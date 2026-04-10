@@ -268,7 +268,7 @@ const SettingsPage = () => {
                     className="hover:underline"
                     style={{ color: 'var(--primary)' }}
                   >
-                    Trivy by Aqua Security
+                    Trivy - Open Source Security Scanner
                   </a>
                 </div>
 

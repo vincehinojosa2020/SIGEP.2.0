@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
-import { Shield, Github, Lock, Scan, ArrowRight } from "lucide-react";
+import { Shield, Github, Lock, Scan, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "../components/ui/button";
 
 const LoginPage = () => {
@@ -27,24 +27,33 @@ const LoginPage = () => {
     >
       {/* Left Panel - Branding */}
       <div 
-        className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
+        className="hidden lg:flex lg:w-[55%] flex-col justify-between p-14 relative overflow-hidden"
         style={{ backgroundColor: 'var(--surface-1)' }}
       >
-        {/* Background Pattern */}
+        {/* Subtle gradient overlay */}
         <div 
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1712230983973-6bf75ad1476e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBncmVlbiUyMHRlY2glMjBjeWJlcnNlY3VyaXR5JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NzU3ODI5Njd8MA&ixlib=rb-4.1.0&q=85')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            background: 'radial-gradient(ellipse at 30% 20%, rgba(0, 229, 153, 0.08) 0%, transparent 50%)',
+            pointerEvents: 'none'
+          }}
+        />
+        
+        {/* Grid pattern overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(var(--border-default) 1px, transparent 1px), 
+                              linear-gradient(90deg, var(--border-default) 1px, transparent 1px)`,
+            backgroundSize: '48px 48px'
           }}
         />
         
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-16">
+          <div className="flex items-center gap-3 mb-20">
             <div 
-              className="w-10 h-10 rounded flex items-center justify-center"
-              style={{ backgroundColor: 'var(--primary)' }}
+              className="w-11 h-11 rounded-xl flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #00D68F 100%)' }}
             >
               <Shield className="w-6 h-6" style={{ color: 'var(--app-bg)' }} />
             </div>
@@ -56,87 +65,124 @@ const LoginPage = () => {
             </span>
           </div>
 
-          <h2 
-            className="text-4xl font-bold mb-6 leading-tight"
-            style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
-          >
-            Software Composition Analysis<br />
-            <span style={{ color: 'var(--primary)' }}>Powered by Trivy</span>
-          </h2>
-
-          <p className="text-lg mb-12" style={{ color: 'var(--text-body)' }}>
-            Scan your repositories for vulnerabilities in dependencies, containers, and infrastructure as code. Integrate seamlessly with GitHub Actions.
-          </p>
-
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div 
-                className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: 'var(--primary-muted)' }}
+          <div className="max-w-lg">
+            <h2 
+              className="text-[2.75rem] font-bold mb-6 leading-[1.1] tracking-tight"
+              style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
+            >
+              Software Composition<br />
+              Analysis
+              <span 
+                className="block mt-2"
+                style={{ color: 'var(--primary)' }}
               >
-                <Scan className="w-5 h-5" style={{ color: 'var(--primary)' }} />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1" style={{ color: 'var(--text-heading)' }}>
-                  Comprehensive Scanning
-                </h3>
-                <p style={{ color: 'var(--text-muted)' }}>
-                  Dependencies, container images, and IaC misconfigurations
-                </p>
-              </div>
-            </div>
+                Powered by Trivy
+              </span>
+            </h2>
 
-            <div className="flex items-start gap-4">
-              <div 
-                className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: 'var(--primary-muted)' }}
-              >
-                <Github className="w-5 h-5" style={{ color: 'var(--primary)' }} />
-              </div>
-              <div>
-                <h3 className="font-semibold mb-1" style={{ color: 'var(--text-heading)' }}>
-                  GitHub Integration
-                </h3>
-                <p style={{ color: 'var(--text-muted)' }}>
-                  Generate GitHub Actions YAML with real-time webhook results
-                </p>
-              </div>
-            </div>
+            <p 
+              className="text-lg mb-14 leading-relaxed"
+              style={{ color: 'var(--text-body)' }}
+            >
+              Scan your repositories for vulnerabilities in dependencies, 
+              container images, and infrastructure as code. Seamlessly 
+              integrate with GitHub Actions.
+            </p>
 
-            <div className="flex items-start gap-4">
-              <div 
-                className="w-10 h-10 rounded flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: 'var(--primary-muted)' }}
-              >
-                <Lock className="w-5 h-5" style={{ color: 'var(--primary)' }} />
+            <div className="space-y-8">
+              <div className="flex items-start gap-5 group">
+                <div 
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105"
+                  style={{ backgroundColor: 'var(--primary-muted)' }}
+                >
+                  <Scan className="w-6 h-6" style={{ color: 'var(--primary)' }} />
+                </div>
+                <div>
+                  <h3 
+                    className="font-semibold mb-1.5 text-[15px]"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
+                    Comprehensive Scanning
+                  </h3>
+                  <p 
+                    className="text-[14px] leading-relaxed"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    Dependencies, container images, and IaC misconfigurations
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold mb-1" style={{ color: 'var(--text-heading)' }}>
-                  Severity Tracking
-                </h3>
-                <p style={{ color: 'var(--text-muted)' }}>
-                  Critical, High, Medium, Low severity classification
-                </p>
+
+              <div className="flex items-start gap-5 group">
+                <div 
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105"
+                  style={{ backgroundColor: 'var(--primary-muted)' }}
+                >
+                  <Github className="w-6 h-6" style={{ color: 'var(--primary)' }} />
+                </div>
+                <div>
+                  <h3 
+                    className="font-semibold mb-1.5 text-[15px]"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
+                    GitHub Integration
+                  </h3>
+                  <p 
+                    className="text-[14px] leading-relaxed"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    Auto-generate GitHub Actions with real-time webhook results
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-5 group">
+                <div 
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105"
+                  style={{ backgroundColor: 'var(--primary-muted)' }}
+                >
+                  <Lock className="w-6 h-6" style={{ color: 'var(--primary)' }} />
+                </div>
+                <div>
+                  <h3 
+                    className="font-semibold mb-1.5 text-[15px]"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
+                    Severity Tracking
+                  </h3>
+                  <p 
+                    className="text-[14px] leading-relaxed"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    Critical, High, Medium, Low severity classification with trends
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10">
+        <div className="relative z-10 flex items-center gap-2">
+          <Sparkles className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Built on Trivy by Aqua Security
+            Powered by Trivy
           </p>
         </div>
       </div>
 
       {/* Right Panel - Login */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
+      <div 
+        className="flex-1 flex items-center justify-center p-8"
+        style={{ 
+          background: 'radial-gradient(ellipse at 70% 30%, rgba(0, 229, 153, 0.04) 0%, var(--app-bg) 60%)'
+        }}
+      >
+        <div className="w-full max-w-[400px]">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-12 justify-center">
+          <div className="lg:hidden flex items-center gap-3 mb-14 justify-center">
             <div 
-              className="w-10 h-10 rounded flex items-center justify-center"
-              style={{ backgroundColor: 'var(--primary)' }}
+              className="w-11 h-11 rounded-xl flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #00D68F 100%)' }}
             >
               <Shield className="w-6 h-6" style={{ color: 'var(--app-bg)' }} />
             </div>
@@ -149,20 +195,21 @@ const LoginPage = () => {
           </div>
 
           <div 
-            className="p-8 rounded-md"
+            className="p-10 rounded-2xl"
             style={{ 
-              backgroundColor: 'var(--surface-1)', 
-              border: '1px solid var(--border-default)' 
+              background: 'linear-gradient(180deg, var(--surface-1) 0%, rgba(10, 20, 16, 0.8) 100%)',
+              border: '1px solid var(--border-default)',
+              boxShadow: '0 24px 48px rgba(0, 0, 0, 0.3)'
             }}
           >
             <h1 
-              className="text-2xl font-bold mb-2 text-center"
+              className="text-2xl font-bold mb-2 text-center tracking-tight"
               style={{ fontFamily: 'Chivo, sans-serif', color: 'var(--text-heading)' }}
             >
-              Welcome Back
+              Welcome back
             </h1>
             <p 
-              className="text-center mb-8"
+              className="text-center mb-10 text-[14px]"
               style={{ color: 'var(--text-muted)' }}
             >
               Sign in to access your security dashboard
@@ -170,14 +217,15 @@ const LoginPage = () => {
 
             <Button
               onClick={handleLogin}
-              className="w-full h-12 text-base font-semibold rounded-sm"
+              className="w-full h-[52px] text-[15px] font-semibold rounded-xl transition-all duration-200"
               style={{ 
-                backgroundColor: 'var(--primary)', 
-                color: 'var(--app-bg)' 
+                background: 'linear-gradient(180deg, var(--primary) 0%, #00D68F 100%)',
+                color: 'var(--app-bg)',
+                boxShadow: '0 4px 16px rgba(0, 229, 153, 0.25)'
               }}
               data-testid="google-login-btn"
             >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -196,15 +244,20 @@ const LoginPage = () => {
                 />
               </svg>
               Continue with Google
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-5 h-5 ml-3" />
             </Button>
 
-            <p 
-              className="text-xs text-center mt-6"
-              style={{ color: 'var(--text-muted)' }}
+            <div 
+              className="mt-8 pt-6 border-t text-center"
+              style={{ borderColor: 'var(--border-divider)' }}
             >
-              By signing in, you agree to our Terms of Service and Privacy Policy
-            </p>
+              <p 
+                className="text-[12px] leading-relaxed"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                By signing in, you agree to our Terms of Service and Privacy Policy
+              </p>
+            </div>
           </div>
         </div>
       </div>
