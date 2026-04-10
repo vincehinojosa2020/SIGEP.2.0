@@ -1,31 +1,29 @@
-name: SCA Security Scan - SIGEP
-
-# Verificacao de seguranca de dependencias
-# Executa Trivy para identificar vulnerabilidades em bibliotecas
-# Configurado por: TI PetroNac (2023)
+name: SIGEP SCA Security Scan
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-  schedule:
-    # Executar scan diario as 06:00 UTC (03:00 BRT)
-    - cron: '0 6 * * *'
-
-permissions:
-  contents: read
-  security-events: write
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   trivy-scan:
     name: Trivy Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do codigo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Executar Trivy - Scan de Vulnerabilidades (JSON)
+      - name: Run Trivy vulnerability scanner (table output)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'vuln'
+          format: 'table'
+
+      - name: Run Trivy vulnerability scanner (JSON output)
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -34,22 +32,7 @@ jobs:
           format: 'json'
           output: 'trivy-results.json'
 
-      - name: Executar Trivy - Scan de Vulnerabilidades (Tabela)
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          scanners: 'vuln'
-          format: 'table'
-
-      - name: Upload Trivy Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-vulnerability-report
-          path: trivy-results.json
-          retention-days: 30
-
-      - name: Executar Trivy - Scan de Licencas
+      - name: Run Trivy license scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
@@ -57,18 +40,9 @@ jobs:
           scanners: 'license'
           format: 'table'
 
-      - name: Verificar vulnerabilidades criticas
-        run: |
-          if [ -f trivy-results.json ]; then
-            CRITICAL_COUNT=$(cat trivy-results.json | python3 -c "
-            import json, sys
-            data = json.load(sys.stdin)
-            count = 0
-            for result in data.get('Results', []):
-                for vuln in result.get('Vulnerabilities', []):
-                    if vuln.get('Severity') in ['CRITICAL', 'HIGH']:
-                        count += 1
-            print(count)
-            " 2>/dev/null || echo "0")
-            echo "Vulnerabilidades CRITICAL/HIGH encontradas: $CRITICAL_COUNT"
-          fi
+      - name: Upload Trivy results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-sca-results
+          path: trivy-results.json
+          retention-days: 30

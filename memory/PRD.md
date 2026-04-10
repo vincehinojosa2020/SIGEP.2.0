@@ -36,6 +36,13 @@ Build legacy Python/Django-inspired monolithic web application "SIGEP" (Sistema 
 - [x] Static artifacts: Dockerfile, docker-compose.yml, GitHub Actions SCA scan, legacy requirements.txt
 - [x] Documentation: README.md, architecture doc, .env.example
 
+## SCA Demo Artifacts (Added Feb 2026)
+- [x] Root `/app/requirements.txt` with 32 intentionally vulnerable pinned Python packages (Django 2.2.28, PyYAML 5.3.1, requests 2.25.1, etc.)
+- [x] Root `/app/package.json` with 20 intentionally vulnerable pinned npm packages (lodash 4.17.19, express 4.17.1, marked 2.0.0, etc.)
+- [x] `.github/workflows/sca-scan.yml` — Trivy SCA scan workflow scanning both manifest files (table + JSON + license)
+- [x] `.trivyignore` — intentionally empty so all CVEs are reported
+- [x] `/app/sigep-artifacts/` — vulnerable Django Python code for additional SCA findings
+
 ## Backlog
 - P1: Production charts/graphs on dashboard (recharts)
 - P1: Well detail page with production history
