@@ -19,6 +19,7 @@ import { Checkbox } from "../components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -160,6 +161,9 @@ const ProjectsPage = () => {
                 >
                   Add New Project
                 </DialogTitle>
+                <DialogDescription style={{ color: 'var(--text-muted)' }}>
+                  Add a repository to scan for vulnerabilities
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateProject} className="space-y-4">
                 <div>
