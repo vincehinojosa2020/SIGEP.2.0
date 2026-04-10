@@ -196,14 +196,14 @@ const ProjectDetailPage = () => {
                 onClick={handleSendTestScan}
                 disabled={sendingTestScan}
                 className="btn-secondary rounded-sm"
-                data-testid="test-scan-btn"
+                data-testid="test-webhook-btn"
               >
                 {sendingTestScan ? (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
                   <FlaskConical className="w-4 h-4 mr-2" />
                 )}
-                {sendingTestScan ? "Sending..." : "Send Test Scan"}
+                {sendingTestScan ? "Sending..." : "Test Webhook"}
               </Button>
               <Button
                 onClick={handleTriggerScan}
