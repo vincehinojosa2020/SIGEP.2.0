@@ -13,7 +13,9 @@ import {
   AlertTriangle,
   Shield,
   FileCode,
-  Webhook
+  Webhook,
+  FlaskConical,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
@@ -29,6 +31,16 @@ const ProjectDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [sendingTestScan, setSendingTestScan] = useState(false);
+
+  const fetchScans = async () => {
+    try {
+      const scansRes = await axios.get(`${API}/scans/project/${projectId}`, { withCredentials: true });
+      setScans(scansRes.data.scans || []);
+    } catch (error) {
+      console.error("Failed to fetch scans:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,12 +70,29 @@ const ProjectDetailPage = () => {
         { withCredentials: true }
       );
       toast.success("Scan triggered. Run the GitHub Action to complete.");
-      // Refresh scans
-      const scansRes = await axios.get(`${API}/scans/project/${projectId}`, { withCredentials: true });
-      setScans(scansRes.data.scans || []);
+      fetchScans();
     } catch (error) {
       console.error("Failed to trigger scan:", error);
       toast.error("Failed to trigger scan");
+    }
+  };
+
+  const handleSendTestScan = async () => {
+    setSendingTestScan(true);
+    try {
+      const res = await axios.post(
+        `${API}/webhook/test-scan/${projectId}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(`Test scan sent! Found ${res.data.vulnerabilities_count} test vulnerabilities`);
+      // Refresh scans to show the new test scan
+      await fetchScans();
+    } catch (error) {
+      console.error("Failed to send test scan:", error);
+      toast.error(error.response?.data?.detail || "Failed to send test scan");
+    } finally {
+      setSendingTestScan(false);
     }
   };
 
@@ -162,14 +191,29 @@ const ProjectDetailPage = () => {
               </a>
             </div>
 
-            <Button
-              onClick={handleTriggerScan}
-              className="btn-primary rounded-sm"
-              data-testid="trigger-scan-btn"
-            >
-              <Play className="w-4 h-4 mr-2" />
-              Trigger Scan
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleSendTestScan}
+                disabled={sendingTestScan}
+                className="btn-secondary rounded-sm"
+                data-testid="test-scan-btn"
+              >
+                {sendingTestScan ? (
+                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <FlaskConical className="w-4 h-4 mr-2" />
+                )}
+                {sendingTestScan ? "Sending..." : "Send Test Scan"}
+              </Button>
+              <Button
+                onClick={handleTriggerScan}
+                className="btn-primary rounded-sm"
+                data-testid="trigger-scan-btn"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Trigger Scan
+              </Button>
+            </div>
           </div>
 
           {project?.description && (

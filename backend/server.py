@@ -410,22 +410,42 @@ async def list_all_scans(
     
     return {"scans": scans}
 
-# ============== WEBHOOK ROUTE ==============
+# ============== WEBHOOK ROUTES ==============
+
+@api_router.get("/webhook/test")
+async def webhook_test():
+    """Test endpoint to verify webhook connectivity"""
+    return {"status": "ok", "message": "webhook endpoint is working"}
 
 @api_router.post("/webhook/scan")
-async def receive_scan_webhook(payload: WebhookPayload):
+async def receive_scan_webhook(payload: WebhookPayload, request: Request):
     """Receive scan results from GitHub Action"""
-    # Verify webhook secret
+    # Log incoming webhook request
+    logger.info(f"=== WEBHOOK RECEIVED ===")
+    logger.info(f"Project ID: {payload.project_id}")
+    logger.info(f"Branch: {payload.branch}")
+    logger.info(f"Commit: {payload.commit_sha}")
+    logger.info(f"Scan Type: {payload.scan_type}")
+    logger.info(f"Status: {payload.status}")
+    
+    # Find project
     project = await db.projects.find_one(
         {"project_id": payload.project_id},
         {"_id": 0}
     )
     
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
+        logger.error(f"Project not found: {payload.project_id}")
+        raise HTTPException(status_code=404, detail=f"Project not found: {payload.project_id}")
     
+    logger.info(f"Project found: {project.get('name')}")
+    
+    # Validate webhook secret
     if project["webhook_secret"] != payload.webhook_secret:
+        logger.error(f"Invalid webhook secret for project: {payload.project_id}")
         raise HTTPException(status_code=403, detail="Invalid webhook secret")
+    
+    logger.info("Webhook secret validated")
     
     # Process Trivy results
     vulnerabilities = []
@@ -433,11 +453,16 @@ async def receive_scan_webhook(payload: WebhookPayload):
     
     if payload.trivy_results:
         results = payload.trivy_results.get("Results", [])
+        logger.info(f"Processing {len(results)} result targets")
+        
         for result in results:
             target = result.get("Target", "unknown")
             target_type = result.get("Type", "dependency")
             
-            for vuln in result.get("Vulnerabilities", []):
+            vulns_in_target = result.get("Vulnerabilities", [])
+            logger.info(f"Target '{target}': {len(vulns_in_target)} vulnerabilities")
+            
+            for vuln in vulns_in_target:
                 severity = vuln.get("Severity", "UNKNOWN").lower()
                 if severity in summary:
                     summary[severity] += 1
@@ -457,7 +482,8 @@ async def receive_scan_webhook(payload: WebhookPayload):
                 })
             
             # Process misconfigs for IaC
-            for misconfig in result.get("Misconfigurations", []):
+            misconfigs = result.get("Misconfigurations", [])
+            for misconfig in misconfigs:
                 severity = misconfig.get("Severity", "UNKNOWN").lower()
                 if severity in summary:
                     summary[severity] += 1
@@ -476,9 +502,13 @@ async def receive_scan_webhook(payload: WebhookPayload):
                     "target_type": "iac"
                 })
     
-    # Create or update scan record
+    logger.info(f"Vulnerability summary: {summary}")
+    logger.info(f"Total vulnerabilities: {len(vulnerabilities)}")
+    
+    # Create scan record
+    scan_id = f"scan_{uuid.uuid4().hex[:12]}"
     scan_doc = {
-        "scan_id": f"scan_{uuid.uuid4().hex[:12]}",
+        "scan_id": scan_id,
         "project_id": payload.project_id,
         "user_id": project["user_id"],
         "status": payload.status,
@@ -493,6 +523,7 @@ async def receive_scan_webhook(payload: WebhookPayload):
     }
     
     await db.scans.insert_one(scan_doc)
+    logger.info(f"Scan saved with ID: {scan_id}")
     
     # Update project last_scan_at
     await db.projects.update_one(
@@ -500,7 +531,159 @@ async def receive_scan_webhook(payload: WebhookPayload):
         {"$set": {"last_scan_at": datetime.now(timezone.utc).isoformat()}}
     )
     
-    return {"success": True, "scan_id": scan_doc["scan_id"]}
+    logger.info(f"=== WEBHOOK COMPLETE ===")
+    return {
+        "success": True, 
+        "scan_id": scan_id,
+        "vulnerabilities_count": len(vulnerabilities),
+        "summary": summary
+    }
+
+
+@api_router.post("/webhook/test-scan/{project_id}")
+async def send_test_scan(project_id: str, user: User = Depends(get_current_user)):
+    """Send a test scan to verify the webhook pipeline works"""
+    # Verify project exists and user owns it
+    project = await db.projects.find_one(
+        {"project_id": project_id, "user_id": user.user_id},
+        {"_id": 0}
+    )
+    
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Create a sample payload with test vulnerabilities
+    test_payload = WebhookPayload(
+        project_id=project_id,
+        webhook_secret=project["webhook_secret"],
+        scan_type="all",
+        commit_sha=f"test_{uuid.uuid4().hex[:7]}",
+        branch="test-branch",
+        status="completed",
+        trivy_results={
+            "Results": [
+                {
+                    "Target": "requirements.txt",
+                    "Type": "pip",
+                    "Vulnerabilities": [
+                        {
+                            "VulnerabilityID": "CVE-2020-14343",
+                            "PkgName": "PyYAML",
+                            "InstalledVersion": "5.3.1",
+                            "FixedVersion": "5.4",
+                            "Severity": "CRITICAL",
+                            "Title": "PyYAML: incomplete fix for CVE-2020-1747",
+                            "Description": "A vulnerability in the PyYAML library allows arbitrary code execution.",
+                            "References": ["https://nvd.nist.gov/vuln/detail/CVE-2020-14343"]
+                        },
+                        {
+                            "VulnerabilityID": "CVE-2021-3737",
+                            "PkgName": "urllib3",
+                            "InstalledVersion": "1.25.9",
+                            "FixedVersion": "1.26.5",
+                            "Severity": "HIGH",
+                            "Title": "urllib3: HTTPS proxy bypass vulnerability",
+                            "Description": "A flaw in urllib3 may cause the proxy to be bypassed."
+                        },
+                        {
+                            "VulnerabilityID": "CVE-2022-42969",
+                            "PkgName": "py",
+                            "InstalledVersion": "1.10.0",
+                            "FixedVersion": "1.11.0",
+                            "Severity": "MEDIUM",
+                            "Title": "py: ReDoS vulnerability in svn_info function"
+                        },
+                        {
+                            "VulnerabilityID": "CVE-2019-11324",
+                            "PkgName": "urllib3",
+                            "InstalledVersion": "1.25.9",
+                            "FixedVersion": "1.24.2",
+                            "Severity": "LOW",
+                            "Title": "urllib3: certification verification bypass"
+                        }
+                    ]
+                },
+                {
+                    "Target": "package-lock.json",
+                    "Type": "npm",
+                    "Vulnerabilities": [
+                        {
+                            "VulnerabilityID": "CVE-2023-45857",
+                            "PkgName": "axios",
+                            "InstalledVersion": "1.6.0",
+                            "FixedVersion": "1.6.1",
+                            "Severity": "HIGH",
+                            "Title": "axios: Server-Side Request Forgery"
+                        }
+                    ]
+                }
+            ]
+        }
+    )
+    
+    # Process the test scan through the same logic as real webhook
+    vulnerabilities = []
+    summary = {"critical": 0, "high": 0, "medium": 0, "low": 0, "unknown": 0}
+    
+    results = test_payload.trivy_results.get("Results", [])
+    for result in results:
+        target = result.get("Target", "unknown")
+        target_type = result.get("Type", "dependency")
+        
+        for vuln in result.get("Vulnerabilities", []):
+            severity = vuln.get("Severity", "UNKNOWN").lower()
+            if severity in summary:
+                summary[severity] += 1
+            
+            vulnerabilities.append({
+                "vuln_id": vuln.get("VulnerabilityID", ""),
+                "package_name": vuln.get("PkgName", ""),
+                "installed_version": vuln.get("InstalledVersion", ""),
+                "fixed_version": vuln.get("FixedVersion"),
+                "severity": vuln.get("Severity", "UNKNOWN"),
+                "title": vuln.get("Title", ""),
+                "description": vuln.get("Description"),
+                "references": vuln.get("References", []),
+                "cvss_score": None,
+                "target": target,
+                "target_type": target_type
+            })
+    
+    # Save test scan
+    scan_id = f"scan_{uuid.uuid4().hex[:12]}"
+    scan_doc = {
+        "scan_id": scan_id,
+        "project_id": project_id,
+        "user_id": user.user_id,
+        "status": "completed",
+        "scan_type": "all",
+        "started_at": datetime.now(timezone.utc).isoformat(),
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "vulnerabilities": vulnerabilities,
+        "summary": summary,
+        "commit_sha": test_payload.commit_sha,
+        "branch": "test-branch",
+        "triggered_by": "test"
+    }
+    
+    await db.scans.insert_one(scan_doc)
+    
+    # Update project last_scan_at
+    await db.projects.update_one(
+        {"project_id": project_id},
+        {"$set": {"last_scan_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    logger.info(f"Test scan created: {scan_id} with {len(vulnerabilities)} vulnerabilities")
+    
+    return {
+        "success": True,
+        "scan_id": scan_id,
+        "message": "Test scan created successfully",
+        "vulnerabilities_count": len(vulnerabilities),
+        "summary": summary
+    }
+
 
 # ============== GITHUB ACTION GENERATOR ==============
 
