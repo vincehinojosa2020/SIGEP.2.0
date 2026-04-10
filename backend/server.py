@@ -30,6 +30,7 @@ import uuid
 import jwt
 import bcrypt
 import io
+import random
 
 # Configuracao MongoDB
 mongo_url = os.environ['MONGO_URL']
@@ -121,6 +122,12 @@ class TelemetriaPayload(BaseModel):
     unidade: str
     timestamp: Optional[str] = None
     duto_id: Optional[str] = None
+
+
+class ConformidadeCreate(BaseModel):
+    tipo: str
+    periodo_inicio: str
+    periodo_fim: str
 
 
 # ============================================================
@@ -236,6 +243,14 @@ async def listar_producao(
     return producao
 
 
+@api_router.get("/producao/historico/{poco_id}")
+async def historico_producao(poco_id: str, user=Depends(get_current_user)):
+    registros = await db.producao.find(
+        {'poco_id': poco_id}, {'_id': 0}
+    ).sort('data', 1).to_list(1000)
+    return registros
+
+
 # ============================================================
 # ROTAS DE DUTOS
 # ============================================================
@@ -315,6 +330,23 @@ async def telemetria_docs():
 async def listar_relatorios(user=Depends(get_current_user)):
     relatorios = await db.conformidade.find({}, {'_id': 0}).sort('data_geracao', -1).to_list(50)
     return relatorios
+
+
+@api_router.post("/conformidade")
+async def criar_relatorio(req: ConformidadeCreate, user=Depends(get_current_user)):
+    doc = {
+        'id': str(uuid.uuid4()),
+        'tipo': req.tipo,
+        'data_geracao': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+        'periodo_inicio': req.periodo_inicio,
+        'periodo_fim': req.periodo_fim,
+        'status': 'Pendente',
+        'numero_anp': f'ANP-{random.randint(10000, 99999)}/2024',
+        'responsavel': user.get('nome', 'N/A')
+    }
+    await db.conformidade.insert_one(doc)
+    doc.pop('_id', None)
+    return doc
 
 
 @api_router.get("/conformidade/{relatorio_id}/pdf")

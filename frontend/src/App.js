@@ -9,6 +9,7 @@ import Conformidade from "@/pages/Conformidade";
 import Telemetria from "@/pages/Telemetria";
 import Fauna from "@/pages/Fauna";
 import Usuarios from "@/pages/Usuarios";
+import PocoDetalhe from "@/pages/PocoDetalhe";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -26,6 +27,7 @@ function AppRoutes() {
       <Route path="/login" element={user ? <Navigate to="/painel" replace /> : <Login />} />
       <Route path="/painel" element={<ProtectedRoute><Painel /></ProtectedRoute>} />
       <Route path="/pocos" element={<ProtectedRoute><Pocos /></ProtectedRoute>} />
+      <Route path="/pocos/:id" element={<ProtectedRoute><PocoDetalhe /></ProtectedRoute>} />
       <Route path="/dutos" element={<ProtectedRoute><Dutos /></ProtectedRoute>} />
       <Route path="/conformidade" element={<ProtectedRoute><Conformidade /></ProtectedRoute>} />
       <Route path="/telemetria" element={<ProtectedRoute><Telemetria /></ProtectedRoute>} />

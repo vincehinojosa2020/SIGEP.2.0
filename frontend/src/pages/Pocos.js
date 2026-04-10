@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
@@ -9,6 +10,7 @@ export default function Pocos() {
   const { token } = useAuth();
   const [pocos, setPocos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`${API}/pocos`, { headers: { Authorization: `Bearer ${token}` } })
@@ -51,7 +53,7 @@ export default function Pocos() {
                   <tbody>
                     {pocos.map(poco => (
                       <tr key={poco.id} data-testid={`poco-row-${poco.nome}`}>
-                        <td><strong>{poco.nome}</strong></td>
+                        <td><a href="#" onClick={(e) => { e.preventDefault(); navigate(`/pocos/${poco.id}`); }} style={{color:'#003366',fontWeight:'bold',textDecoration:'underline',cursor:'pointer'}} data-testid={`poco-link-${poco.nome}`}>{poco.nome}</a></td>
                         <td>{poco.bacia}</td>
                         <td>{poco.campo}</td>
                         <td>{poco.profundidade?.toLocaleString('pt-BR')}</td>
