@@ -1,0 +1,154 @@
+{
+  "project_name": "Depends - Software Composition Analysis Scanner",
+  "theme": "Dark",
+  "archetype": "Swiss & High-Contrast mixed with Jewel & Luxury (Technical Dark Green Mode)",
+  "aesthetic_summary": "A highly technical, command-center dashboard inspired by Endor Labs. It utilizes deep, almost-black forest greens for backgrounds with neon-mint green accents to signify active, healthy states. The layout is extremely dense, using 1px grid borders (The 'Technical' Look) to separate data rather than soft drop shadows or heavy cards. Sharp corners or very subtle rounding (2px-4px max). Typography is developer-centric, utilizing Chivo for robust headers, IBM Plex Sans for legible data density, and JetBrains Mono for raw code and metrics.",
+  "colors": {
+    "background": {
+      "app": "#050A08",
+      "surface_1": "#0A1410",
+      "surface_2": "#111C16",
+      "surface_hover": "#17261D"
+    },
+    "border": {
+      "default": "#182A20",
+      "focus": "#00E599",
+      "divider": "#101D16"
+    },
+    "primary": {
+      "default": "#00E599",
+      "hover": "#00FFAB",
+      "muted": "rgba(0, 229, 153, 0.15)"
+    },
+    "text": {
+      "heading": "#FFFFFF",
+      "body": "#94A3B8",
+      "muted": "#64748B",
+      "success": "#00E599"
+    },
+    "status": {
+      "critical": {
+        "bg": "rgba(239, 68, 68, 0.1)",
+        "text": "#EF4444",
+        "border": "#EF4444"
+      },
+      "high": {
+        "bg": "rgba(249, 115, 22, 0.1)",
+        "text": "#F97316",
+        "border": "#F97316"
+      },
+      "medium": {
+        "bg": "rgba(234, 179, 8, 0.1)",
+        "text": "#EAB308",
+        "border": "#EAB308"
+      },
+      "low": {
+        "bg": "rgba(59, 130, 246, 0.1)",
+        "text": "#3B82F6",
+        "border": "#3B82F6"
+      },
+      "secure": {
+        "bg": "rgba(16, 185, 129, 0.1)",
+        "text": "#10B981",
+        "border": "#10B981"
+      }
+    }
+  },
+  "typography": {
+    "font_families": {
+      "heading": "'Chivo', sans-serif",
+      "body": "'IBM Plex Sans', sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "scales": {
+      "h1": "text-3xl md:text-4xl tracking-tight font-bold",
+      "h2": "text-2xl md:text-3xl tracking-tight font-semibold",
+      "h3": "text-xl md:text-2xl tracking-tight font-medium",
+      "h4": "text-lg font-medium",
+      "body": "text-sm md:text-base leading-relaxed",
+      "small": "text-xs md:text-sm text-slate-400",
+      "overline": "text-[10px] md:text-xs uppercase tracking-[0.15em] font-semibold text-slate-500",
+      "metric_value": "text-4xl md:text-5xl font-mono font-medium tracking-tighter"
+    },
+    "rules": [
+      "No generic sans-serifs (Inter, Roboto, Open Sans) for headings.",
+      "Metrics and numeric data MUST use the monospace font.",
+      "Section overlines must be heavily tracked (uppercase and spaced out).",
+      "Use font-medium or font-semibold for standard headers, reserve font-bold for top-level page titles."
+    ]
+  },
+  "spacing_and_layout": {
+    "strategy": "The 'Control Room' Grid",
+    "grid_gaps": "gap-4 md:gap-6",
+    "padding": {
+      "container": "p-6 md:p-8",
+      "card": "p-4 md:p-6",
+      "dense_cell": "p-2 md:p-3"
+    },
+    "border_radius": {
+      "global": "rounded-sm",
+      "buttons": "rounded-sm",
+      "cards": "rounded-md"
+    },
+    "layout_structure": {
+      "sidebar": "Fixed width (e.g., w-64), sticky to viewport height, distinct border-r.",
+      "main_content": "Flexible width, min-h-screen, grid-cols-1 md:grid-cols-3 or 4.",
+      "widgets": "Span calculations critical for density. Metric summaries = col-span-1. Charts = col-span-2 or 3. Lists = col-span-full or col-span-1 row-span-2."
+    }
+  },
+  "components": {
+    "cards_and_surfaces": {
+      "style": "Grid Borders (The 'Technical' Look). Instead of floating cards with soft shadows, use a unified border-collapse feel or sharp 1px borders with NO shadow.",
+      "background": "bg-[#0A1410]",
+      "border": "border border-[#182A20]",
+      "hover_effect": "Hover states slightly lift the background to #111C16 and border to #223B2D, NO shadows."
+    },
+    "buttons": {
+      "primary": "bg-[#00E599] text-[#050A08] font-semibold hover:bg-[#00FFAB] transition-colors rounded-sm",
+      "secondary": "bg-transparent border border-[#182A20] text-white hover:border-[#00E599] hover:text-[#00E599] transition-all rounded-sm",
+      "ghost": "text-slate-400 hover:text-white hover:bg-[#111C16] rounded-sm"
+    },
+    "data_display": {
+      "tables": "Dense rows. Subtle border-b on rows. Hovering a row highlights it slightly with bg-[#111C16]. Use monospace for IDs, SHAs, and versions.",
+      "badges": "Flat background with 10% opacity of the status color, 1px solid border matching the status color, and text in the status color. Sharp rounded-sm.",
+      "charts": "Use Recharts (via Shadcn). Grid lines must be very faint (#182A20). Tooltips must have solid dark backgrounds with 1px borders, no blur. Colors must map to the 'status' or 'primary' color variables defined above."
+    },
+    "inputs_and_forms": {
+      "style": "Dark background inputs bg-[#050A08] with border border-[#182A20].",
+      "focus": "focus:border-[#00E599] focus:ring-1 focus:ring-[#00E599]",
+      "code_blocks": "Syntax highlighting with deep green-black background, monospaced text. Add a 'Copy to Clipboard' ghost button."
+    }
+  },
+  "motion": {
+    "philosophy": "Minimalist and precise. No bouncy or slow animations.",
+    "hover_states": "Fast transition (150ms). Elements should snap into focus.",
+    "page_transitions": "Instant or subtle fade (opacity 0 to 1 over 200ms)."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Text must pass WCAG AA on the dark background. The muted text (#64748B) should be checked against #050A08.",
+    "data_testid": "MANDATORY. Every interactive element (button, link, input, chart segment, table row action) must have a semantic, kebab-case data-testid attribute. Example: data-testid='github-action-generate-btn'."
+  },
+  "media_and_icons": {
+    "icon_library": "Phosphor Icons (@phosphor-icons/react) - Use 'regular' or 'bold' weight for a technical, crisp look. Avoid soft/curved icon sets.",
+    "image_urls": {
+      "background_abstract": {
+        "url": "https://images.unsplash.com/photo-1712230983973-6bf75ad1476e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjBncmVlbiUyMHRlY2glMjBjeWJlcnNlY3VyaXR5JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NzU3ODI5Njd8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract dark green and black tech squares. Use subtly (10-20% opacity) for the login page background or empty states."
+      },
+      "user_avatar": {
+        "url": "https://images.unsplash.com/photo-1759701546662-b79f5d881124?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjB1c2VyJTIwYXZhdGFyJTIwaGVhZHNob3R8ZW58MHx8fHwxNzc1NzgyOTY3fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Professional user avatar for the top right profile dropdown."
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "You are building 'Depends', a highly technical SCA scanner dashboard inspired by Endor Labs.",
+    "Do NOT use soft shadows, glassmorphism, or rounded bubbles. This is a technical 'control room'. Use 1px borders (border-[#182A20]), sharp corners (rounded-sm), and dark solid backgrounds.",
+    "Implement a three-column layout in the main view: Left sidebar (navigation), middle main content (charts/metrics), right panel (feed/history/details).",
+    "Typography is critical: Use 'Chivo' for all headers, 'IBM Plex Sans' for body text, and 'JetBrains Mono' for ANY data metric, code, SHA, or technical identifier. Do not fall back to Inter.",
+    "Strictly follow the severity color codes (Critical: Red, High: Orange, Medium: Yellow, Low: Blue, Secure/Healthy: Mint Green).",
+    "All cards and widgets must have padding to prevent text collision with borders.",
+    "When generating GitHub Action YAML, display it in a proper dark code block with syntax colors and a copy button.",
+    "MANDATORY: Inject data-testid attributes into all actionable UI elements."
+  ]
+}
